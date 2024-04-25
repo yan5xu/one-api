@@ -1,12 +1,13 @@
 package meta
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/songquanpeng/one-api/common/ctxkey"
 	"github.com/songquanpeng/one-api/relay/adaptor/azure"
 	"github.com/songquanpeng/one-api/relay/channeltype"
 	"github.com/songquanpeng/one-api/relay/relaymode"
-	"strings"
 )
 
 type Meta struct {
@@ -53,5 +54,14 @@ func GetByContext(c *gin.Context) *Meta {
 		meta.BaseURL = channeltype.ChannelBaseURLs[meta.ChannelType]
 	}
 	meta.APIType = channeltype.ToAPIType(meta.ChannelType)
+	// 读取 VertexAI 的配置
+	if c.GetString(ctxkey.ConfigVertexLocation) != "" {
+		config := make(map[string]string)
+		config["vertex_location"] = c.GetString(ctxkey.ConfigVertexLocation)
+		config["vertex_project_id"] = c.GetString(ctxkey.ConfigVertexProjectID)
+		config["vertex_private_key_id"] = c.GetString(ctxkey.COnfigVertexPrivateKeyID)
+		config["vertex_client_email"] = c.GetString(ctxkey.ConfigVertexClientEmail)
+		meta.Config = config
+	}
 	return &meta
 }

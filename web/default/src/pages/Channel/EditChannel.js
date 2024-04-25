@@ -58,7 +58,11 @@ const EditChannel = () => {
     region: '',
     sk: '',
     ak: '',
-    user_id: ''
+    user_id: '',
+    vertex_location: "",
+    vertex_project_id: "",
+    vertex_private_key_id: "",
+    vertex_client_email: "",
   });
   const handleInputChange = (e, { name, value }) => {
     setInputs((inputs) => ({ ...inputs, [name]: value }));
@@ -174,7 +178,7 @@ const EditChannel = () => {
       showInfo('模型映射必须是合法的 JSON 格式！');
       return;
     }
-    let localInputs = {...inputs};
+    let localInputs = { ...inputs };
     if (localInputs.base_url && localInputs.base_url.endsWith('/')) {
       localInputs.base_url = localInputs.base_url.slice(0, localInputs.base_url.length - 1);
     }
@@ -246,7 +250,7 @@ const EditChannel = () => {
                 <Message>
                   注意，<strong>模型部署名称必须和模型名称保持一致</strong>，因为 One API 会把请求体中的 model
                   参数替换为你的部署名称（模型名称中的点会被剔除），<a target='_blank'
-                                                                    href='https://github.com/songquanpeng/one-api/issues/133?notification_referrer_id=NT_kwDOAmJSYrM2NjIwMzI3NDgyOjM5OTk4MDUw#issuecomment-1571602271'>图片演示</a>。
+                    href='https://github.com/songquanpeng/one-api/issues/133?notification_referrer_id=NT_kwDOAmJSYrM2NjIwMzI3NDgyOjM5OTk4MDUw#issuecomment-1571602271'>图片演示</a>。
                 </Message>
                 <Form.Field>
                   <Form.Input
@@ -447,6 +451,48 @@ const EditChannel = () => {
                   placeholder={'AWS IAM Secret Key'}
                   onChange={handleConfigChange}
                   value={config.sk}
+                  autoComplete=''
+                />
+              </Form.Field>
+            )
+          }
+          {
+            inputs.type === 36 && (
+              <Form.Field>
+                <Form.Input
+                  label='location'
+                  name='vertex_location'
+                  required
+                  placeholder={'location，e.g. us-west-2'}
+                  onChange={handleConfigChange}
+                  value={config.vertex_location}
+                  autoComplete=''
+                />
+                <Form.Input
+                  label='project_id'
+                  name='vertex_project_id'
+                  required
+                  placeholder={'GCP project id'}
+                  onChange={handleConfigChange}
+                  value={config.vertex_project_id}
+                  autoComplete=''
+                />
+                <Form.Input
+                  label='private_key_id'
+                  name='vertex_private_key_id'
+                  required
+                  placeholder={'private key id'}
+                  onChange={handleConfigChange}
+                  value={config.vertex_private_key_id}
+                  autoComplete=''
+                />
+                <Form.Input
+                  label='client_email'
+                  name='vertex_client_email'
+                  required
+                  placeholder={'client email'}
+                  onChange={handleConfigChange}
+                  value={config.vertex_client_email}
                   autoComplete=''
                 />
               </Form.Field>

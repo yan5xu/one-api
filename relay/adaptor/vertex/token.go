@@ -5,16 +5,16 @@ import (
 	"context"
 	"crypto/rsa"
 	"crypto/x509"
-	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt"
-	"github.com/songquanpeng/one-api/relay/meta"
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/golang-jwt/jwt"
+	"github.com/songquanpeng/one-api/relay/meta"
 )
 
 type Credentials struct {
@@ -141,22 +141,12 @@ func exchangeJwtForAccessToken(ctx context.Context, signedJWT string) (string, e
 
 func getToken(ctx context.Context, meta *meta.Meta) (string, error) {
 	// todo 每次请求都要换次token？？？
-	encodedString := ""
-	decodedBytes, err := base64.StdEncoding.DecodeString(encodedString)
-	if err != nil {
-		return "", err
-	}
-	m := make(map[string]string)
-	err = json.Unmarshal(decodedBytes, &m)
-	if err != nil {
-		return "", err
-	}
 
 	sa := &ServiceAccount{
 		Cred: &Credentials{
-			PrivateKey:   m["private_key"],
-			PrivateKeyID: m["private_key_id"],
-			ClientEmail:  m["client_email"],
+			PrivateKey:   meta.APIKey,
+			PrivateKeyID: meta.Config["vertex_private_key_id"],
+			ClientEmail:  meta.Config["vertex_client_email"],
 		},
 		Scopes: scopes,
 	}
