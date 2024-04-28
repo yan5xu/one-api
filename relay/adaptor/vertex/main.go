@@ -20,13 +20,21 @@ import (
 func ConvertRequest(textRequest model.GeneralOpenAIRequest) *Request {
 
 	messages := make([]Message, 0)
-	for _, message := range textRequest.Messages {
+	for i, message := range textRequest.Messages {
 		var content Content
+		role := message.Role
+		if role != "user" {
+			if i == 0 {
+				// 第一个message必须是user
+				continue
+			}
+			role = "assistant"
+		}
 		if message.IsStringContent() {
 			content.Type = "text"
 			content.Text = message.StringContent()
 			messages = append(messages, Message{
-				Role:    message.Role,
+				Role:    role,
 				Content: []Content{content},
 			})
 			continue
@@ -50,12 +58,12 @@ func ConvertRequest(textRequest model.GeneralOpenAIRequest) *Request {
 			contents = append(contents, content)
 		}
 		messages = append(messages, Message{
-			Role:    message.Role,
+			Role:    role,
 			Content: contents,
 		})
 	}
 
-	maxTokens := 2000
+	maxTokens := 256
 	if textRequest.MaxTokens != 0 {
 		maxTokens = textRequest.MaxTokens
 	}
@@ -176,6 +184,7 @@ func StreamHandler(c *gin.Context, resp *http.Response) (*model.ErrorWithStatusC
 	go func() {
 		for scanner.Scan() {
 			data := scanner.Text()
+			fmt.Printf("data: %s\n", data)
 			if len(data) < 6 {
 				continue
 			}

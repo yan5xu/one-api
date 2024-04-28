@@ -19,20 +19,14 @@ func (a *Adaptor) Init(meta *meta.Meta) {
 
 }
 
-// https://$LOCATION-aiplatform.googleapis.com/v1/projects/$PROJECT_ID/locations/$LOCATION/publishers/anthropic/models/$MODEL:streamRawPredict
 func (a *Adaptor) GetRequestURL(meta *meta.Meta) (string, error) {
-	_ = meta
-	// todo 需要修改为配置
 	location := meta.Config["vertex_location"]
 	projectId := meta.Config["vertex_project_id"]
 	models := meta.ActualModelName
 
 	return fmt.Sprintf(
 		"https://%s-aiplatform.googleapis.com/v1/projects/%s/locations/%s/publishers/anthropic/models/%s:streamRawPredict",
-		location,
-		projectId,
-		location,
-		models,
+		location, projectId, location, models,
 	), nil
 }
 
