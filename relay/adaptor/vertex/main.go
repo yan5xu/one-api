@@ -20,15 +20,18 @@ import (
 func ConvertRequest(textRequest model.GeneralOpenAIRequest) *Request {
 
 	messages := make([]Message, 0)
-	for i, message := range textRequest.Messages {
+	firstIsUser := false
+	for _, message := range textRequest.Messages {
 		var content Content
 		role := message.Role
+		// first message must use the "user" role
 		if role != "user" {
-			if i == 0 {
-				// 第一个message必须是user
+			role = "assistant"
+			if !firstIsUser {
 				continue
 			}
-			role = "assistant"
+		} else {
+			firstIsUser = true
 		}
 		if message.IsStringContent() {
 			content.Type = "text"
@@ -63,7 +66,7 @@ func ConvertRequest(textRequest model.GeneralOpenAIRequest) *Request {
 		})
 	}
 
-	maxTokens := 256
+	maxTokens := 1024
 	if textRequest.MaxTokens != 0 {
 		maxTokens = textRequest.MaxTokens
 	}
